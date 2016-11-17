@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Meme2Gether</title>
+		
+		<!-- Favicon -->
+		<link rel="icon" href="/favicon.png">
+		
+		<!-- jQuery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://cdn.rawgit.com/carhartl/jquery-cookie/master/src/jquery.cookie.js"></script>
+		<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<!--<link rel="stylesheet" href="https://bootswatch.com/sandstone/bootstrap.min.css">-->
+		<link rel="stylesheet" href="https://bootswatch.com/darkly/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		
+		<!-- Socket.IO -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
+		
+		<!-- FontAwesome -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		
+		<!-- Custom CSS -->
+		<style>
+			body {
+			margin-top: 5%;
+			}
+			.center {
+			text-align: center;
+			}
+			.hidden {
+			display: none;
+			}	
+			.chat-messages {
+			min-height: 256px;
+			max-height: 256px;
+			overflow: auto;
+			}
+			.chat-messages > li {
+			list-style: none;
+			}
+			.chat-notice {
+			font-style: italic;
+			}
+			
+			.ui-draggable, .ui-droppable {
+			background-position: top;
+			}
+			.video-volumeslider {
+			width: 30%;
+			display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			
+			<!-- Main content -->
+			<div class="col-md-8">
+				<div class="panel panel-danger">
+					<div class="panel-heading">Meme2Gether</div>
+					<ul class="nav nav-tabs">
+						<li><a class="use-image">Image</a></li>
+						<li><a class="use-video">Video</a></li>
+					</ul>
+					
+					<!-- Image container -->
+					<div class="panel-body">
+						<div class="image-container">
+							<div class="input-group">
+								<input type="text" class="form-control image-url" placeholder="Image URL"></input>
+								<span class="input-group-btn">
+									<button class="btn btn-danger image-set" type="button">Set</button>
+								</span>
+							</div>
+							<br><br>
+							<center>
+								<img class="img-rounded img-responsive image-display"></img>
+							</center>
+						</div>
+						
+						<!-- Video container -->
+						<div class="video-container hidden">
+							<div class="input-group">
+								<input type="text" class="form-control video-url" placeholder="Video URL"></input>
+								<span class="input-group-btn">
+									<button class="btn btn-danger video-set" type="button">Set</button>
+								</span>
+							</div>
+							<br><br>
+							<center>
+								<h4 class="center video-title"></h4>
+								<p class="center video-resolution"></p>
+								<div align="center" class="embed-responsive embed-responsive-16by9">
+									<video width="320" height="240" class="embed-responsive-item video-element">
+										<source class="video-display" type="video/mp4">
+									</video>
+									<div class="video-progress"></div>
+								</div>
+								<button class="btn btn-success btn-sm video-play"><i class="fa fa-play"></i></button>
+								<button class="btn btn-danger btn-sm video-pause"><i class="fa fa-pause"></i></button>
+								<div class="video-volumeslider"></div>
+							</center>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			
+			<!-- Chat -->
+			<div class="col-md-4">
+				<div class="panel panel-success">
+					<div class="panel-heading">Chat</div>
+					<div class="panel-body">
+						
+						<!-- Login container -->
+						<div class="login-container">
+							<div class="input-group">
+								<input type="text" class="form-control chat-username" placeholder="Username">
+								<span class="input-group-btn">
+									<button class="btn btn-success chat-setusername" type="button">Login</button>
+								</span>
+							</div>
+						</div>
+						
+						<!-- Chat container -->
+						<div class="chat-container hidden">
+							<ul class="chat-messages"></ul>
+							<div class="input-group">
+								<input type="text" class="form-control chat-messagetxt" placeholder="Message">
+								<span class="input-group-btn">
+									<button class="btn btn-success chat-send" type="button">Send</button>
+								</span>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+			var socket = io();
+			
+			/* Navigation */
+			$('.use-image').click(function () {
+				$('.image-container').removeClass('hidden');
+				$('.video-container').addClass('hidden');
+			});
+			$('.use-video').click(function () {
+				$('.image-container').addClass('hidden');
+				$('.video-container').removeClass('hidden');
+			});		
+			
+			
+			/* Image */
+			$('.image-set').click(function () {
+				socket.emit('image set', $('.image-url').val());
+				$('.image-url').empty();
+			});
+			socket.on('image set', function(url) {
+				$('.image-display').attr('src', url);
+			});		
+			
+			
+			/* Video */
+			function updateTime () {
+				if (!$('.video-element')[0].paused) {
+					socket.emit('video time set', $('.video-element')[0].currentTime.toString());
+				}
+			}
+			$('.video-set').click(function () {
+				socket.emit('video set', $('.video-url').val());
+				$('.video-url').val('');
+			});
+			$('.video-url').keyup(function (e) {
+				if(e.keyCode == 13) {
+					$('.video-set').trigger('click');
+				}
+			});
+			$(".video-volumeslider").on("slidechange", function() {
+				$('.video-element')[0].volume = $(".video-volumeslider").slider("value") / 100;
+				$.cookie('video-volume', $(".video-volumeslider").slider("value") / 100);
+			});
+			$('.video-play').click(function (time) {
+				socket.emit('video play', $('.video-element')[0].currentTime.toString());
+			});
+			$('.video-pause').click(function (time) {
+				socket.emit('video pause', $('.video-element')[0].currentTime.toString());
+			});
+			socket.on('video play', function(time) {
+				$('.video-element')[0].currentTime = parseFloat(time);
+				$('.video-element')[0].play();
+			});
+			socket.on('video pause', function(time) {
+				$('.video-element')[0].currentTime = parseFloat(time);
+				$('.video-element')[0].pause();
+			});		
+			socket.on('video set', function(data) {
+				if (data.title != null) {
+					if (data.uploader != null) {
+						$('.video-title').html(data.title + ' by <b><i>' + data.uploader + '</i></b>');
+						} else {
+						$('.video-title').html(data.title);
+					}
+					} else {
+					$('.video-title').empty();
+				}
+				if (data.resolution != null) {
+					$('.video-resolution').html('Resolution: <i>' + data.resolution + '</i>');
+					} else {
+					$('.video-resolution').empty();
+				}
+				$('.video-display').attr('src', data.url);
+				$('.video-element').load();	
+			});	
+			socket.on('video time set', function(time) {
+				$('.video-element')[0].currentTime = parseFloat(time);
+			});	
+			
+			
+			/* Chat */
+			$('.chat-username').keyup(function (e) {
+				if(e.keyCode == 13) {
+					$('.chat-setusername').trigger('click');
+					$('.chat-messagetxt').focus();
+				}
+			});
+			username = 'Faggot';
+			scrollPosition = 256;
+			function addChatMessage (content) {
+				$('.chat-messages').append('<li class="chat-message">' + content + '</li>');
+				if (scrollPosition == 256) {
+					$('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
+				}
+			}
+			function addChatNotice (content) {
+				$('.chat-messages').append('<li class="chat-notice">' + content + '</li>');
+				if (scrollPosition == 256) {
+					$('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
+				}
+			}
+			$('.chat-setusername').click(function () {
+				if ($('.chat-username').val().length > 2 && $('.chat-username').val().length < 24) {
+					username = $('.chat-username').val();
+					$('.login-container').addClass('hidden');
+					$('.chat-container').removeClass('hidden');
+				}
+			});
+			$('.chat-send').click(function () {
+				if ($('.chat-messagetxt').val().length > 0) {
+					scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop();
+					socket.emit('chat message', { user: username, message: $('.chat-messagetxt').val() });
+					$('.chat-messagetxt').val('');
+					} else {
+					addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>');
+				}
+			});
+			$('.chat-messagetxt').keyup(function (e) {
+				if(e.keyCode == 13) {
+					$('.chat-send').trigger('click');
+				}
+			});
+			socket.on('chat message', function(data) {
+				addChatMessage('<b><i>' + data.user + '</i></b>: ' + data.message);
+			});
+			
+			
+			/* Load data from server */
+			$(document).ready(function () {
+				setInterval(updateTime, 1000);
+				if ($.cookie("video-volume") == undefined) {
+					$.cookie("video-volume", 0.1);
+				}
+				$(".video-volumeslider").slider({
+					range: "min",
+					value: $.cookie("video-volume") * 100
+				});
+				$('.video-element')[0].volume = $.cookie("video-volume");
+				
+				socket.emit('image get');
+				socket.emit('video get');
+				socket.emit('video time get');
+			});
+		</script>
+	</body>
+</html>
