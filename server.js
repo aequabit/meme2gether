@@ -9,7 +9,7 @@ var youtubedl = require('youtube-dl');
 /* Configuration */
 var config = {
 	/* The port the webserver listens to */
-	"httpPort" : 80,
+	"httpPort" : 1337,
 	
 	/* The default image displayed in the image section */
 	'currentImage' : 'http://oi65.tinypic.com/i6gsbs.jpg',
@@ -142,11 +142,7 @@ io.on('connection', function (socket) {
 								/* Store the resolution with it's url */
 								resolutions[element['width']] = element['url'];
 							}
-							} else {
-							/* If no matching resolution was found (shouldn't occur) */
-							console.log('couldn\'t get video resolutions: %s', url);
-							return;
-						}
+							}
 					});
 					/* Give out status message */
 					console.log('updated video (from youtube %s) - highest available resolution with audio: %s - url: %s', url, highest, resolutions[highest]);
