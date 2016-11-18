@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Meme2Gether</title>
 		
 		<!-- Favicon -->
@@ -28,7 +29,7 @@
 		<!-- Custom CSS -->
 		<style>
 			body {
-			margin-top: 5%;
+			margin-top: 1%;
 			}
 			.center {
 			text-align: center;
@@ -61,7 +62,7 @@
 		<div class="container">
 			
 			<!-- Main content -->
-			<div class="col-md-8">
+			<div class="col-md-8 main-panel">
 				<div class="panel panel-danger">
 					<div class="panel-heading">Meme2Gether</div>
 					<ul class="nav nav-tabs">
@@ -112,10 +113,15 @@
 				</div>
 			</div>
 			
+			<!-- Sidebar -->
+			<div class="col-md-1 sidebar-panel hidden">
+				<button class="btn btn-success chat-show"><i class="fa fa-comments"></i></button>
+			</div>
+			
 			<!-- Chat -->
-			<div class="col-md-4">
+			<div class="col-md-4 chat-panel">
 				<div class="panel panel-success">
-					<div class="panel-heading">Chat</div>
+					<div class="panel-heading">Chat <button type="button" class="close chat-close">&times;</button></div>
 					<div class="panel-body">
 						
 						<!-- Login container -->
@@ -157,6 +163,18 @@
 				$('.video-container').removeClass('hidden');
 			});		
 			
+			$('.chat-close').click(function () {
+				$('.main-panel').removeClass('col-md-8');
+				$('.main-panel').addClass('col-md-11');
+				$('.sidebar-panel').removeClass('hidden');
+				$('.chat-panel').addClass('hidden');
+			});
+			$('.chat-show').click(function () {
+				$('.main-panel').addClass('col-md-8');
+				$('.main-panel').removeClass('col-md-11');
+				$('.sidebar-panel').addClass('hidden');
+				$('.chat-panel').removeClass('hidden');
+			});
 			
 			/* Image */
 			$('.image-set').click(function () {
