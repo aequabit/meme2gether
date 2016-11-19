@@ -58,9 +58,10 @@ app.get('*', function (req, res) {
 
 /* New connection */
 io.on('connection', function (socket) {
-	/* Store the user's socket and it's corresponding IP address in the users object */
-	storage.users[socket] = socket.request.connection.remoteAddress;
-	log('%s: connected', storage.users[socket]);
+	/* Store the user's sessionid and it's corresponding IP address in the users object */
+	socket.id = Math.floor(Math.random() * 1000);
+	storage.users[socket.id] = socket.request.connection.remoteAddress;
+	log('%s: connected', storage.users[socket.id]);
 
 	/* Broadcast the user count */
 	io.emit('users count', _.keys(storage.users).length);
@@ -69,7 +70,7 @@ io.on('connection', function (socket) {
 	io.emit('history list', storage.history);
 
 	/* Log the join message */
-	log('%s: client connected', storage.users[socket]);
+	log('%s: client connected', storage.users[socket.id]);
 
 	/* History */
 	socket.on('history list', function () {
@@ -81,13 +82,13 @@ io.on('connection', function (socket) {
 		/* Check if the message is empty */
 		if (data.message.length > 0) {
 			/* Log it to the console */
-			log('%s (%s): chat message: \'%s\'', storage.users[socket], data.user, data.message);
+			log('%s (%s): chat message: \'%s\'', storage.users[socket.id], data.user, data.message);
 
 			/* Broadcast the message */
 			io.emit('chat message', { user: data.user, message: data.message });
 		} else {
 			/* Log an error message (usually only occuring when user manipulated the frontend) */
-			log('%s (%s): empty chat message', storage.users[socket], data.user);
+			log('%s (%s): empty chat message', storage.users[socket.id], data.user);
 		}
 	});
 
@@ -109,7 +110,7 @@ io.on('connection', function (socket) {
 			/* Broadcast the history */
 			io.emit('history list', storage.history);
 		} else {
-			log('%s: received invalid url: %s', storage.users[socket], url);
+			log('%s: received invalid url: %s', storage.users[socket.id], url);
 		}
 	});
 
@@ -202,7 +203,7 @@ io.on('connection', function (socket) {
 					});
 				} else {
 					/* If the url was a direct stream */
-					log('%s: updated video: %s', storage.users[socket], url);
+					log('%s: updated video: %s', storage.users[socket.id], url);
 
 					/* Push to the history */
 					storage.history.push(sprintf('Video: <a href="%s" target="_blank">%s</a>', url, url));
@@ -220,7 +221,7 @@ io.on('connection', function (socket) {
 				}
 			} else {
 				/* If invalid url was received */
-				log('%s: received invalid url', storage.users[socket]);
+				log('%s: received invalid url', storage.users[socket.id]);
 			}
 
 		});
@@ -228,8 +229,8 @@ io.on('connection', function (socket) {
 		/* User disconnect */
 		socket.on('disconnect', function () {
 			/* Remove the socket from the users object */
-			log('%s: disconnected', storage.users[socket]);
-			delete storage.users[socket];
+			log('%s: disconnected', storage.users[socket.id]);
+			delete storage.users[socket.id];
 		});
 	});
 
