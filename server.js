@@ -61,6 +61,14 @@ io.on('connection', function (socket) {
 	/* Store the user's sessionid and it's corresponding IP address in the users object */
 	socket.id = Math.floor(Math.random() * 1000);
 	storage.users[socket.id] = socket.request.connection.remoteAddress;
+
+	/* Drop the user if it has no valid ip address stored */
+	if (storage.users[socket.id] == undefined) {
+		socket.disconnect();
+		log('%s: dropped client without valid ip', socket.id);
+		return;
+	}
+
 	log('%s: connected', storage.users[socket.id]);
 
 	/* Broadcast the user count */
