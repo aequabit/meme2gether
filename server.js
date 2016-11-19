@@ -3,6 +3,7 @@ var app = require('express')();
 var request = require('http');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var fs = require('fs');
 var moment = require('moment');
 var _ = require('underscore');
 var validUrl = require('valid-url');
@@ -45,7 +46,13 @@ function log () {
 	for (i = 1; i < arguments.length; i++) {
 		args.push(arguments[i]);
 	}
-	console.log('[%s] %s', moment().format('HH:mm:ss'), vsprintf(arguments[0], args));
+	var log = sprintf('[%s] %s', moment().format('HH:mm:ss'), vsprintf(arguments[0], args));
+	console.log(log);
+	fs.writeFile(__dirname + '/log/' + moment().format('DD.MM.YYYY') + '.txt', log+'\n',  {'flag':'a'},  function(err) {
+		if (err) {
+			return console.error(err);
+		}
+	});
 }
 
 /* HTTP routes */
@@ -192,16 +199,16 @@ io.on('connection', function (socket) {
 							}
 						});
 						/* Give out status message */
-						log('%s: updated video (from youtube %s) - highest available resolution with audio: %s - url: %s', storage.users[socket], url, highest, resolutions[highest]);
+						log('%s: updated video (from youtube %s) - highest available resolution with audio: %s - url: %s', storage.users[socket.id], url, highest, resolutions[highest]);
 
 						/* Push to the history */
-						storage.history.push(sprintf('YouTube: <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank">%s</a></b>', url, info.fulltitle, info.uploader_url, info.uploader));
+						storage.history.push(sprintf('YouTube: <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', url, info.fulltitle, info.uploader_url, info.uploader));
 
 						/* Broadcast the history */
 						io.emit('history list', storage.history);
 
 						/* Update the video for all clients */
-						io.emit('video set', { title: info.fulltitle, uploader: info.uploader, resolution: fullresolution, url: resolutions[highest] });
+						io.emit('video set', { title: info.fulltitle, ytUrl: url, uploader: info.uploader, uploaderUrl: info.uploader_url, resolution: fullresolution, url: resolutions[highest] });
 
 						/* Update the config */
 						storage.currentVideoName = info.fulltitle;
@@ -239,6 +246,9 @@ io.on('connection', function (socket) {
 			/* Remove the socket from the users object */
 			log('%s: disconnected', storage.users[socket.id]);
 			delete storage.users[socket.id];
+
+			/* Broadcast the user count */
+			io.emit('users count', _.keys(storage.users).length);
 		});
 	});
 

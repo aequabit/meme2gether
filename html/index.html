@@ -241,7 +241,7 @@
     /* Image */
     $('.image-set').click(function () {
       socket.emit('image set', $('.image-url').val());
-      $('.image-url').empty();
+      $('.image-url').val('');
     });
     socket.on('image set', function(url) {
       $('.image-display').attr('src', url);
@@ -283,7 +283,7 @@
     socket.on('video set', function(data) {
       if (data.title != null) {
         if (data.uploader != null) {
-          $('.video-title').html(data.title + ' by <b><i>' + data.uploader + '</i></b>');
+          $('.video-title').html('<a href="' + data.ytUrl + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>');
         } else {
           $('.video-title').html(data.title);
         }
