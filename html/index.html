@@ -241,11 +241,11 @@
           // { 'type' : 'yt', 'url' : url, 'title' : info.fulltitle, 'uploaderUrl' : info.uploader_url, 'uploader' : info.uploader })
 
           if (historyitem.type == 'image') {
-            $('.history-list').append(sprintf('<i class="fa fa-picture-o"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+            $('.history-list').append(sprintf('<i class="fa fa-picture-o"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
           } else if (historyitem.type == 'video') {
-            $('.history-list').append(sprintf('<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+            $('.history-list').append(sprintf('<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
           } else if (historyitem.type == 'yt') {
-            $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader))
+            $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader))
           } else {
             $('.history-list').append(sprintf('<i class="fa fa-question"></i> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url))
           }
