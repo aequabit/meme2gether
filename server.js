@@ -11,9 +11,9 @@ var youtubedl = require('youtube-dl');
 var sprintf = require('sprintf-js').sprintf;
 var vsprintf = require('sprintf-js').vsprintf
 
-/* Object to store variables */
+/* Object to store stuff :^) */
 var storage = {
-	/* The port the webserver listens to */
+	/* The port the webserver listens on */
 	"httpPort" : 1337,
 
 	/* The default image displayed in the image section */
@@ -120,7 +120,7 @@ io.on('connection', function (socket) {
 			io.emit('image set', storage.currentImage);
 
 			/* Push to the history */
-			storage.history.push(sprintf('Image: <a href="%s" target="_blank">%s</a>', url, url));
+			storage.history.push({ 'type' : 'image', 'url' : storage.currentImage });
 
 			/* Broadcast the history */
 			io.emit('history list', storage.history);
@@ -131,14 +131,12 @@ io.on('connection', function (socket) {
 
 	/* Video play */
 	socket.on('video play', function (time) {
-		//console.log('play, time: %s', time);
 		io.emit('video play', time);
 		storage.currentVideoTime = time;
 	});
 
 	/* Video pause */
 	socket.on('video pause', function (time) {
-		//console.log('pause, time: %s', time);
 		io.emit('video pause', time);
 		storage.currentVideoTime = time;
 	});
@@ -150,7 +148,6 @@ io.on('connection', function (socket) {
 
 	/* Video time set */
 	socket.on('video time set', function (time) {
-		//console.log('update, time: %s', time);
 		storage.currentVideoTime = time;
 	});
 
@@ -180,7 +177,7 @@ io.on('connection', function (socket) {
 
 						/* Object to store all resolutions and their correstponding video url */
 						var resolutions = {};
-						console.log(info);
+
 						/* Loop through all video formats */
 						info['formats'].forEach(function (element) {
 							/* If height, width and url exist */
@@ -202,7 +199,7 @@ io.on('connection', function (socket) {
 						log('%s: updated video (from youtube %s) - highest available resolution with audio: %s - url: %s', storage.users[socket.id], url, highest, resolutions[highest]);
 
 						/* Push to the history */
-						storage.history.push(sprintf('YouTube: <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', url, info.fulltitle, info.uploader_url, info.uploader));
+						storage.history.push({ 'type' : 'yt', 'url' : url, 'title' : info.fulltitle, 'uploaderUrl' : info.uploader_url, 'uploader' : info.uploader });
 
 						/* Broadcast the history */
 						io.emit('history list', storage.history);
@@ -221,7 +218,7 @@ io.on('connection', function (socket) {
 					log('%s: updated video: %s', storage.users[socket.id], url);
 
 					/* Push to the history */
-					storage.history.push(sprintf('Video: <a href="%s" target="_blank">%s</a>', url, url));
+					storage.history.push({ 'type' : 'video', 'url' : url });
 
 					/* Broadcast the history */
 					io.emit('history list', storage.history);

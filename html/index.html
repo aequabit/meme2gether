@@ -23,6 +23,9 @@
   <!-- Socket.IO -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
 
+  <!-- Sprintf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.3/sprintf.min.js"></script>
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -91,6 +94,14 @@
   .history-list>li:only-child {
     margin: 0;
   }
+
+  .replay {
+    font-size: 8px;
+  }
+  .btn-transparent {
+    background-color: transparent;
+    border-color: none;
+  }
   </style>
 </head>
 <body>
@@ -156,7 +167,7 @@
       <!-- Chat -->
       <div class="col-md-4 chat-panel">
         <div class="panel panel-success">
-          <div class="panel-heading">Chat <button type="button" class="close chat-close">&times;</button></div>
+          <div class="panel-heading">Chat <button type="button" class="close chat-close">&times</button></div>
           <div class="panel-body">
 
             <!-- Login container -->
@@ -195,177 +206,196 @@
     </div>
 
     <script>
-    var socket = io();
+    var socket = io()
 
     /* Navigation */
     $('.use-image').click(function () {
-      $('.image-container').removeClass('hidden');
-      $('.video-container').addClass('hidden');
-    });
+      $('.image-container').removeClass('hidden')
+      $('.video-container').addClass('hidden')
+    })
     $('.use-video').click(function () {
-      $('.image-container').addClass('hidden');
-      $('.video-container').removeClass('hidden');
-    });
+      $('.image-container').addClass('hidden')
+      $('.video-container').removeClass('hidden')
+    })
 
     $('.chat-close').click(function () {
-      $('.main-panel').removeClass('col-md-8');
-      $('.main-panel').addClass('col-md-11');
-      $('.sidebar-panel').removeClass('hidden');
-      $('.chat-panel').addClass('hidden');
-    });
+      $('.main-panel').removeClass('col-md-8')
+      $('.main-panel').addClass('col-md-11')
+      $('.sidebar-panel').removeClass('hidden')
+      $('.chat-panel').addClass('hidden')
+    })
     $('.chat-show').click(function () {
-      $('.main-panel').addClass('col-md-8');
-      $('.main-panel').removeClass('col-md-11');
-      $('.sidebar-panel').addClass('hidden');
-      $('.chat-panel').removeClass('hidden');
-    });
+      $('.main-panel').addClass('col-md-8')
+      $('.main-panel').removeClass('col-md-11')
+      $('.sidebar-panel').addClass('hidden')
+      $('.chat-panel').removeClass('hidden')
+    })
 
     /* History */
     socket.on('history list', function (list) {
       if (list.length > 0) {
-        $('.history-list').html(null);
-        $.each(list.reverse(), function(i, element) {
-          $('.history-list').append(element);
-          if (i != list.length - 1) {
-            $('.history-list').append('<hr>');
+        $('.history-list').html(null)
+        $.each(list.reverse(), function(i, historyitem) {
+          // <a href="%s" target="_blank">%s</a>
+          // <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>
+          // { 'type' : 'yt', 'url' : url, 'title' : info.fulltitle, 'uploaderUrl' : info.uploader_url, 'uploader' : info.uploader })
+
+          if (historyitem.type == 'image') {
+            $('.history-list').append(sprintf('<i class="fa fa-picture-o"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+          } else if (historyitem.type == 'video') {
+            $('.history-list').append(sprintf('<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+          } else if (historyitem.type == 'yt') {
+            $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader, historyitem.url))
+          } else {
+            $('.history-list').append(sprintf('<i class="fa fa-question"></i> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url))
           }
-        });
+          if (i != list.length - 1) {
+            $('.history-list').append('<hr>')
+          }
+        })
       }
-    });
+      $('.replay').on('click', function () {
+        if ($(this).data('type') == 'image') {
+          socket.emit('image set', $(this).data('url'))
+        } else if ($(this).data('type') == 'video') {
+          socket.emit('video set', $(this).data('url'))
+        }
+      })
+    })
 
     /* User count */
     socket.on('users count', function (count) {
-      $('.users-count').html(count);
-    });
+      $('.users-count').html(count)
+    })
 
     /* Image */
     $('.image-set').click(function () {
-      socket.emit('image set', $('.image-url').val());
-      $('.image-url').val('');
-    });
+      socket.emit('image set', $('.image-url').val())
+      $('.image-url').val('')
+    })
     socket.on('image set', function(url) {
-      $('.image-display').attr('src', url);
-    });
+      $('.image-display').attr('src', url)
+    })
 
     /* Video */
     function updateTime () {
       if (!$('.video-element')[0].paused) {
-        socket.emit('video time set', $('.video-element')[0].currentTime.toString());
+        socket.emit('video time set', $('.video-element')[0].currentTime.toString())
       }
     }
     $('.video-set').click(function () {
-      socket.emit('video set', $('.video-url').val());
-      $('.video-url').val('');
-    });
+      socket.emit('video set', $('.video-url').val())
+      $('.video-url').val('')
+    })
     $('.video-url').keyup(function (e) {
       if(e.keyCode == 13) {
-        $('.video-set').trigger('click');
+        $('.video-set').trigger('click')
       }
-    });
+    })
     $(".video-volumeslider").on("slidechange", function() {
-      $('.video-element')[0].volume = $(".video-volumeslider").slider("value") / 100;
-      $.cookie('video-volume', $(".video-volumeslider").slider("value") / 100);
-    });
+      $('.video-element')[0].volume = $(".video-volumeslider").slider("value") / 100
+      $.cookie('video-volume', $(".video-volumeslider").slider("value") / 100)
+    })
     $('.video-play').click(function (time) {
-      socket.emit('video play', $('.video-element')[0].currentTime.toString());
-    });
+      socket.emit('video play', $('.video-element')[0].currentTime.toString())
+    })
     $('.video-pause').click(function (time) {
-      socket.emit('video pause', $('.video-element')[0].currentTime.toString());
-    });
+      socket.emit('video pause', $('.video-element')[0].currentTime.toString())
+    })
     socket.on('video play', function(time) {
-      $('.video-element')[0].currentTime = parseFloat(time);
-      $('.video-element')[0].play();
-    });
+      $('.video-element')[0].currentTime = parseFloat(time)
+      $('.video-element')[0].play()
+    })
     socket.on('video pause', function(time) {
-      $('.video-element')[0].currentTime = parseFloat(time);
-      $('.video-element')[0].pause();
-    });
+      $('.video-element')[0].currentTime = parseFloat(time)
+      $('.video-element')[0].pause()
+    })
     socket.on('video set', function(data) {
       if (data.title != null) {
         if (data.uploader != null) {
-          $('.video-title').html('<a href="' + data.ytUrl + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>');
+          $('.video-title').html('<a href="' + data.ytUr + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>')
         } else {
-          $('.video-title').html(data.title);
+          $('.video-title').html(data.title)
         }
       } else {
-        $('.video-title').empty();
+        $('.video-title').empty()
       }
       if (data.resolution != null) {
-        $('.video-resolution').html('Resolution: <i>' + data.resolution + '</i>');
+        $('.video-resolution').html('Resolution: <i>' + data.resolution + '</i>')
       } else {
-        $('.video-resolution').empty();
+        $('.video-resolution').empty()
       }
-      $('.video-display').attr('src', data.url);
-      $('.video-element').load();
-    });
+      $('.video-display').attr('src', data.url)
+      $('.video-element').load()
+    })
     socket.on('video time set', function(time) {
-      $('.video-element')[0].currentTime = parseFloat(time);
-    });
+      $('.video-element')[0].currentTime = parseFloat(time)
+    })
 
 
     /* Chat */
     $('.chat-username').keyup(function (e) {
       if(e.keyCode == 13) {
-        $('.chat-setusername').trigger('click');
-        $('.chat-messagetxt').focus();
+        $('.chat-setusername').trigger('click')
+        $('.chat-messagetxt').focus()
       }
-    });
-    username = 'Faggot';
-    scrollPosition = 256;
+    })
+    username = 'Faggot'
+    scrollPosition = 256
     function addChatMessage (content) {
-      $('.chat-messages').append('<li class="chat-message">' + content + '</li>');
+      $('.chat-messages').append('<li class="chat-message">' + content + '</li>')
       if (scrollPosition == 256) {
-        $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
+        $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
       }
     }
     function addChatNotice (content) {
-      $('.chat-messages').append('<li class="chat-notice">' + content + '</li>');
+      $('.chat-messages').append('<li class="chat-notice">' + content + '</li>')
       if (scrollPosition == 256) {
-        $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
+        $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
       }
     }
     $('.chat-setusername').click(function () {
       if ($('.chat-username').val().length > 2 && $('.chat-username').val().length < 24) {
-        username = $('.chat-username').val();
-        $('.login-container').addClass('hidden');
-        $('.chat-container').removeClass('hidden');
+        username = $('.chat-username').val()
+        $('.login-container').addClass('hidden')
+        $('.chat-container').removeClass('hidden')
       }
-    });
+    })
     $('.chat-send').click(function () {
       if ($('.chat-messagetxt').val().length > 0) {
-        scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop();
-        socket.emit('chat message', { user: username, message: $('.chat-messagetxt').val() });
-        $('.chat-messagetxt').val('');
+        scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop()
+        socket.emit('chat message', { user: username, message: $('.chat-messagetxt').val() })
+        $('.chat-messagetxt').val('')
       } else {
-        addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>');
+        addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>')
       }
-    });
+    })
     $('.chat-messagetxt').keyup(function (e) {
       if(e.keyCode == 13) {
-        $('.chat-send').trigger('click');
+        $('.chat-send').trigger('click')
       }
-    });
+    })
     socket.on('chat message', function(data) {
-      addChatMessage('<b><i>' + data.user + '</i></b>: ' + data.message);
-    });
+      addChatMessage('<b><i>' + data.user + '</i></b>: ' + data.message)
+    })
 
 
     /* Load data from server */
     $(document).ready(function () {
-      setInterval(updateTime, 1000);
+      setInterval(updateTime, 1000)
       if ($.cookie("video-volume") == undefined) {
-        $.cookie("video-volume", 0.1);
+        $.cookie("video-volume", 0.1)
       }
       $(".video-volumeslider").slider({
         range: "min",
         value: $.cookie("video-volume") * 100
-      });
-      $('.video-element')[0].volume = $.cookie("video-volume");
+      })
+      $('.video-element')[0].volume = $.cookie("video-volume")
 
-      socket.emit('image get');
-      socket.emit('video get');
-      socket.emit('video time get');
-    });
+      socket.emit('image get')
+      socket.emit('video get')
+      socket.emit('video time get')
+    })
     </script>
   </body>
   </html>
