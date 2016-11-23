@@ -245,7 +245,7 @@
           } else if (historyitem.type == 'video') {
             $('.history-list').append(sprintf('<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
           } else if (historyitem.type == 'yt') {
-            $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader, historyitem.url))
+            $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> &nbsp <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader))
           } else {
             $('.history-list').append(sprintf('<i class="fa fa-question"></i> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url))
           }
@@ -313,7 +313,7 @@
     socket.on('video set', function(data) {
       if (data.title != null) {
         if (data.uploader != null) {
-          $('.video-title').html('<a href="' + data.ytUr + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>')
+          $('.video-title').html('<a href="' + data.ytUrl + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>')
         } else {
           $('.video-title').html(data.title)
         }
