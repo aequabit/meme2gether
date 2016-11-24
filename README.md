@@ -1,5 +1,5 @@
 # meme2gether
-[Demo](http://open.aequabit.de:1337)
+[Demo](http://aequabit.de)
 
 A small video streaming site synching content for all viewers to make everybody see the same.
 
