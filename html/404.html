@@ -12,15 +12,8 @@
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <!--<link rel="stylesheet" href="https://bootswatch.com/sandstone/bootstrap.min.css">-->
   <link rel="stylesheet" href="https://bootswatch.com/darkly/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-  <!-- Socket.IO -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <!-- Custom CSS -->
   <style>
@@ -33,42 +26,5 @@
   <div class="container">
     <div class="alert alert-danger">404 Not Found</div>
   </div>
-
-  <script>
-  var socket = io();
-  username = 'Faggot';
-  scrollPosition = 256;
-  function addChatMessage (content) {
-    $('.chat-messages').append('<li class="chat-message">' + content + '</li>');
-    if (scrollPosition == 256) {
-      $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
-    }
-  }
-  function addChatNotice (content) {
-    $('.chat-messages').append('<li class="chat-notice">' + content + '</li>');
-    if (scrollPosition == 256) {
-      $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'));
-    }
-  }
-  $('.btn-setusername').click(function () {
-    if ($('.txt-username').val().length > 2 && $('.txt-username').val().length < 24) {
-      username = $('.txt-username').val();
-      $('.login-container').addClass('hidden');
-      $('.chat-container').removeClass('hidden');
-    }
-  });
-  $('.btn-send').click(function () {
-    if ($('.txt-message').val().length > 0) {
-      scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop();
-      socket.emit('chat message', username + ': ' + $('.txt-message').val());
-      $('.txt-message').val('')
-    } else {
-      addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>');
-    }
-  });
-  socket.on('chat message', function(msg) {
-    addChatMessage(msg);
-  });
-  </script>
 </body>
 </html>
