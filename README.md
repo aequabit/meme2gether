@@ -1,5 +1,5 @@
 # meme2gether
-[Demo](http://aequabit.de)
+[Demo](http://meme2gether.ga)
 
 A small video streaming site synching content for all viewers to make everybody see the same.
 
