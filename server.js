@@ -17,7 +17,7 @@ var storage = {
 	"httpPort" : 8080,
 
 	/* The default image displayed in the image section */
-	'currentImage' : 'http://oi65.tinypic.com/i6gsbs.jpg',
+	'currentImage' : 'https://www.allmystery.de/i/t292473_post2.jpg',
 
 	/* The default video title, uploader and resolution */
 	'currentVideoTitle' : null,
