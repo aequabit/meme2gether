@@ -1,437 +1,466 @@
 <!doctype html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meme2Gether</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meme2Gether</title>
 
-  <!-- Favicon -->
-  <link rel="icon" href="/favicon.png">
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.png">
 
-  <!-- jQuery -->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="//cdn.rawgit.com/carhartl/jquery-cookie/master/src/jquery.cookie.js"></script>
-  <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.rawgit.com/carhartl/jquery-cookie/master/src/jquery.cookie.js"></script>
+    <script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//bootswatch.com/darkly/bootstrap.min.css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//bootswatch.com/darkly/bootstrap.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-  <!-- Socket.IO -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.5.1/socket.io.min.js"></script>
 
-  <!-- Sprintf.js -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.3/sprintf.min.js"></script>
+    <!-- Sprintf.js -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.3/sprintf.min.js"></script>
 
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-  <!-- Video.js -->
-  <link rel="stylesheet" href="//vjs.zencdn.net/5.8.8/video-js.css">
-  <script src="//vjs.zencdn.net/5.8.8/video.js"></script>
+    <!-- Video.js -->
+    <link rel="stylesheet" href="//vjs.zencdn.net/5.8.8/video-js.css">
+    <script src="//vjs.zencdn.net/5.8.8/video.js"></script>
 
-  <!-- Custom CSS -->
-  <style>
-  body {
-    margin-top: 1%;
-  }
-  ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 16px;
-    _background-color: #f0f0f0;
-  }
-  ::-webkit-scrollbar-corner {
-    background-color: #e6e6e6;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 12px;
-    border: 4px solid rgba(255,255,255,0);
-    background-clip: content-box;
-    _background-color: #bfbfbf;
-    background-color: #A0A0A0;
-  }
-  .center {
-    text-align: center;
-  }
-  .hidden {
-    display: none;
-  }
-  .chat-messages {
-    min-height: 256px;
-    max-height: 256px;
-    overflow: auto;
-  }
-  .chat-messages > li {
-    list-style: none;
-  }
-  .chat-notice {
-    font-style: italic;
-  }
+    <!-- Custom CSS -->
+    <style>
+        body {
+            margin-top: 1%;
+        }
 
-  .ui-draggable, .ui-droppable {
-    background-position: top;
-  }
-  .video-volumeslider {
-    width: 30%;
-    display: inline-block;
-  }
+         ::-webkit-scrollbar {
+            -webkit-appearance: none;
+            width: 16px;
+            _background-color: #f0f0f0;
+        }
 
-  .users-container {
-    text-align: center;
-  }
+         ::-webkit-scrollbar-corner {
+            background-color: #e6e6e6;
+        }
 
-  .history-list {
-    max-height: 512px;
-    list-style: none;
-    overflow: auto;
-    overflow-x: hidden;
-  }
-  .history-list>li {
-    margin-top: 15px;
-  }
-  .history-list>li:first-child {
-    margin-top: 0;
-  }
-  .history-list>li:only-child {
-    margin: 0;
-  }
+         ::-webkit-scrollbar-thumb {
+            border-radius: 12px;
+            border: 4px solid rgba(255, 255, 255, 0);
+            background-clip: content-box;
+            _background-color: #bfbfbf;
+            background-color: #A0A0A0;
+        }
 
-  .replay {
-    font-size: 8px;
-  }
-  .btn-transparent {
-    background-color: transparent;
-    border-color: none;
-  }
+        .center {
+            text-align: center;
+        }
 
-  .video-js-responsive-container.vjs-hd {
-    padding-top: 56.25%;
-  }
-  .video-js-responsive-container.vjs-sd {
-    padding-top: 75%;
-  }
-  .video-js-responsive-container {
-    width: 100%;
-    position: relative;
-  }
-  .video-js-responsive-container .video-js {
-    height: 100% !important;
-    width: 100% !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  </style>
+        .hidden {
+            display: none;
+        }
+
+        .chat-messages {
+            min-height: 256px;
+            max-height: 256px;
+            overflow: auto;
+        }
+
+        .chat-messages>li {
+            list-style: none;
+        }
+
+        .chat-notice {
+            font-style: italic;
+        }
+
+        .ui-draggable,
+        .ui-droppable {
+            background-position: top;
+        }
+
+        .video-volumeslider {
+            width: 30%;
+            display: inline-block;
+        }
+
+        .users-container {
+            text-align: center;
+        }
+
+        .history-list {
+            max-height: 512px;
+            list-style: none;
+            overflow: auto;
+            overflow-x: hidden;
+        }
+
+        .history-list>li {
+            margin-top: 15px;
+        }
+
+        .history-list>li:first-child {
+            margin-top: 0;
+        }
+
+        .history-list>li:only-child {
+            margin: 0;
+        }
+
+        .replay {
+            font-size: 8px;
+        }
+
+        .btn-transparent {
+            background-color: transparent;
+            border-color: none;
+        }
+
+        .video-js-responsive-container.vjs-hd {
+            padding-top: 56.25%;
+        }
+
+        .video-js-responsive-container.vjs-sd {
+            padding-top: 75%;
+        }
+
+        .video-js-responsive-container {
+            width: 100%;
+            position: relative;
+        }
+
+        .video-js-responsive-container .video-js {
+            height: 100% !important;
+            width: 100% !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
+    <div class="container">
 
-    <!-- Main content -->
-    <div class="col-md-8 main-panel">
-      <div class="panel panel-danger">
-        <div class="panel-heading">Meme2Gether <span class="pull-right">Users online: <span class="label label-default users-count"></span></span></div>
-        <ul class="nav nav-tabs">
-          <li><a class="use-image">Image</a></li>
-          <li><a class="use-video">Video</a></li>
-        </ul>
+        <!-- Main content -->
+        <div class="col-md-8 main-panel">
+            <div class="panel panel-danger">
+                <div class="panel-heading">Meme2Gether <span class="pull-right">Users online: <span class="label label-default users-count"></span></span>
+                </div>
+                <ul class="nav nav-tabs">
+                    <li><a class="use-image">Image</a></li>
+                    <li><a class="use-video">Video</a></li>
+                </ul>
 
-        <!-- Image container -->
-        <div class="panel-body">
-          <div class="image-container">
-            <div class="input-group">
-              <input type="text" class="form-control image-url" placeholder="Image URL"></input>
-              <span class="input-group-btn">
+                <!-- Image container -->
+                <div class="panel-body">
+                    <div class="image-container">
+                        <div class="input-group">
+                            <input type="text" class="form-control image-url" placeholder="Image URL"></input>
+                            <span class="input-group-btn">
                 <button class="btn btn-danger image-set" type="button">Set</button>
               </span>
-            </div>
-            <br><br>
-            <center>
-              <img class="img-rounded img-responsive image-display"></img>
-            </center>
-          </div>
+                        </div>
+                        <br><br>
+                        <center>
+                            <img class="img-rounded img-responsive image-display"></img>
+                        </center>
+                    </div>
 
-          <!-- Video container -->
-          <div class="video-container hidden">
-            <div class="input-group">
-              <input type="text" class="form-control video-url" placeholder="Video URL"></input>
-              <span class="input-group-btn">
+                    <!-- Video container -->
+                    <div class="video-container hidden">
+                        <div class="input-group">
+                            <input type="text" class="form-control video-url" placeholder="Video URL"></input>
+                            <span class="input-group-btn">
                 <button class="btn btn-danger video-set" type="button">Set</button>
               </span>
-            </div>
-            <br><br>
+                        </div>
+                        <br><br>
 
-            <center>
+                        <center>
 
-              <h4 class="center video-title"></h4>
-              <p class="center video-resolution"></p>
+                            <h4 class="center video-title"></h4>
+                            <p class="center video-resolution"></p>
 
-              <div align="center" class="video-js-responsive-container vjs-hd">
-                <video id="my-video" class="video-js video-element" controls preload="auto" width="1280" height="720" poster="//placehold.it/1280x720" data-setup="{}">
+                            <div align="center" class="video-js-responsive-container vjs-hd">
+                                <video id="my-video" class="video-js video-element" controls preload="auto" width="1280" height="720" poster="//placehold.it/1280x720" data-setup="{}">
                   <source class="video-display" type="video/mp4">
                     <p class="vjs-no-js">
                       Please use a browser which supports HTML5 videos.
                     </p>
                   </video>
+                            </div>
+                        </center>
+                    </div>
+
                 </div>
-          </center>
+            </div>
         </div>
 
-      </div>
-    </div>
-  </div>
+        <!-- Sidebar -->
+        <div class="col-md-1 sidebar-panel hidden">
+            <button class="btn btn-success chat-show"><i class="fa fa-comments"></i></button>
+        </div>
 
-  <!-- Sidebar -->
-  <div class="col-md-1 sidebar-panel hidden">
-    <button class="btn btn-success chat-show"><i class="fa fa-comments"></i></button>
-  </div>
+        <!-- Chat -->
+        <div class="col-md-4 chat-panel">
+            <div class="panel panel-success">
+                <div class="panel-heading">Chat <button type="button" class="close chat-close">&times;</button></div>
+                <div class="panel-body">
 
-  <!-- Chat -->
-  <div class="col-md-4 chat-panel">
-    <div class="panel panel-success">
-      <div class="panel-heading">Chat <button type="button" class="close chat-close">&times;</button></div>
-      <div class="panel-body">
-
-        <!-- Login container -->
-        <div class="login-container">
-          <div class="input-group">
-            <input type="text" class="form-control chat-username" placeholder="Username">
-            <span class="input-group-btn">
+                    <!-- Login container -->
+                    <div class="login-container">
+                        <div class="input-group">
+                            <input type="text" class="form-control chat-username" placeholder="Username">
+                            <span class="input-group-btn">
               <button class="btn btn-success chat-setusername" type="button">Login</button>
             </span>
-          </div>
-        </div>
+                        </div>
+                    </div>
 
-        <!-- Chat container -->
-        <div class="chat-container hidden">
-          <ul class="chat-messages"></ul>
-          <div class="input-group">
-            <input type="text" class="form-control chat-messagetxt" placeholder="Message">
-            <span class="input-group-btn">
+                    <!-- Chat container -->
+                    <div class="chat-container hidden">
+                        <ul class="chat-messages"></ul>
+                        <div class="input-group">
+                            <input type="text" class="form-control chat-messagetxt" placeholder="Message">
+                            <span class="input-group-btn">
               <button class="btn btn-success chat-send" type="button">Send</button>
             </span>
-          </div>
-        </div>
+                        </div>
+                    </div>
 
-      </div>
+                </div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">History</div>
+                <div class="panel-body">
+                    <div class="history-container">
+                        <div class="history-list">
+                            <center><i>Nothing meme'd yet.</i></center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="panel panel-primary">
-      <div class="panel-heading">History</div>
-      <div class="panel-body">
-        <div class="history-container">
-          <div class="history-list"><center><i>Nothing meme'd yet.</i></center></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    <script>
+        var socket = io()
 
-<script>
-var socket = io()
+        /* Navigation */
+        $('.use-image').click(function() {
+            $('.image-container').removeClass('hidden')
+            $('.video-container').addClass('hidden')
+        })
+        $('.use-video').click(function() {
+            $('.image-container').addClass('hidden')
+            $('.video-container').removeClass('hidden')
+        })
 
-/* Navigation */
-$('.use-image').click(function () {
-  $('.image-container').removeClass('hidden')
-  $('.video-container').addClass('hidden')
-})
-$('.use-video').click(function () {
-  $('.image-container').addClass('hidden')
-  $('.video-container').removeClass('hidden')
-})
+        $('.chat-close').click(function() {
+            $('.main-panel').removeClass('col-md-8')
+            $('.main-panel').addClass('col-md-11')
+            $('.sidebar-panel').removeClass('hidden')
+            $('.chat-panel').addClass('hidden')
+        })
+        $('.chat-show').click(function() {
+            $('.main-panel').addClass('col-md-8')
+            $('.main-panel').removeClass('col-md-11')
+            $('.sidebar-panel').addClass('hidden')
+            $('.chat-panel').removeClass('hidden')
+        })
 
-$('.chat-close').click(function () {
-  $('.main-panel').removeClass('col-md-8')
-  $('.main-panel').addClass('col-md-11')
-  $('.sidebar-panel').removeClass('hidden')
-  $('.chat-panel').addClass('hidden')
-})
-$('.chat-show').click(function () {
-  $('.main-panel').addClass('col-md-8')
-  $('.main-panel').removeClass('col-md-11')
-  $('.sidebar-panel').addClass('hidden')
-  $('.chat-panel').removeClass('hidden')
-})
+        /* History */
+        socket.on('history list', function(list) {
+            if (list.length > 0) {
+                $('.history-list').html(null)
+                $.each(list.reverse(), function(i, historyitem) {
+                    if (historyitem.type == 'image') {
+                        $('.history-list').append(sprintf(
+                            '<i class="fa fa-picture-o"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>',
+                            historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+                    } else if (historyitem.type == 'video') {
+                        $('.history-list').append(sprintf(
+                            '<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>',
+                            historyitem.url, historyitem.url, historyitem.url, historyitem.url))
+                    } else if (historyitem.type == 'yt') {
+                        $('.history-list').append(sprintf(
+                            '<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>',
+                            historyitem.url, historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader))
+                    } else {
+                        $('.history-list').append(sprintf('<i class="fa fa-question"></i> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url))
+                    }
+                    if (i != list.length - 1) {
+                        $('.history-list').append('<hr>')
+                    }
+                })
+            }
+        })
 
-/* History */
-socket.on('history list', function (list) {
-  if (list.length > 0) {
-    $('.history-list').html(null)
-    $.each(list.reverse(), function(i, historyitem) {
-      // <a href="%s" target="_blank">%s</a>
-      // <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>
-      // { 'type' : 'yt', 'url' : url, 'title' : info.fulltitle, 'uploaderUrl' : info.uploader_url, 'uploader' : info.uploader })
+        $('body').on('click', '.replay', function() {
+            if ($(this).data('type') == 'image') {
+                socket.emit('image set', $(this).data('url'))
+            } else if ($(this).data('type') == 'video') {
+                socket.emit('video set', $(this).data('url'))
+            }
+        })
 
-      if (historyitem.type == 'image') {
-        $('.history-list').append(sprintf('<i class="fa fa-picture-o"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
-      } else if (historyitem.type == 'video') {
-        $('.history-list').append(sprintf('<i class="fa fa-video-camera"></i> <button class="btn btn-transparent btn-xs replay" data-type="image" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a>', historyitem.url, historyitem.url, historyitem.url, historyitem.url))
-      } else if (historyitem.type == 'yt') {
-        $('.history-list').append(sprintf('<i class="fa fa-youtube-play"></i> <button class="btn btn-transparent btn-xs replay" data-type="video" data-url="%s"><i class="fa fa-play"></i></button> <a href="%s" target="_blank">%s</a> by <b><a href="%s" target="_blank"><i>%s</i></a></b>', historyitem.url, historyitem.url, historyitem.title, historyitem.uploaderUrl, historyitem.uploader))
-      } else {
-        $('.history-list').append(sprintf('<i class="fa fa-question"></i> &nbsp <a href="%s" target="_blank">%s</a>', historyitem.url))
-      }
-      if (i != list.length - 1) {
-        $('.history-list').append('<hr>')
-      }
-    })
-  }
-})
+        /* User count */
+        socket.on('users count', function(count) {
+            $('.users-count').html(count)
+        })
 
-$('body').on('click', '.replay', function () {
-  if ($(this).data('type') == 'image') {
-    socket.emit('image set', $(this).data('url'))
-  } else if ($(this).data('type') == 'video') {
-    socket.emit('video set', $(this).data('url'))
-  }
-})
+        /* Image */
+        $('.image-set').click(function() {
+            socket.emit('image set', $('.image-url').val())
+            $('.image-url').val('')
+        })
+        socket.on('image set', function(url) {
+            $('.image-display').attr('src', url)
+        })
 
-/* User count */
-socket.on('users count', function (count) {
-  $('.users-count').html(count)
-})
+        /* Video */
+        function updateTime() {
+            if (!$('.video-element')[0].paused) {
+                socket.emit('video time set', $('.video-element video')[0].currentTime.toString())
+            }
+        }
+        $('.video-set').click(function() {
+            socket.emit('video set', $('.video-url').val())
+            $('.video-url').val('')
+        })
+        $('.video-url').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('.video-set').trigger('click')
+            }
+        })
+        $(".video-volumeslider").on("slidechange", function() {
+            $('.video-element video')[0].volume = $(".video-volumeslider").slider("value") / 100
+            $.cookie('video-volume', $(".video-volumeslider").slider("value") / 100)
+        })
 
-/* Image */
-$('.image-set').click(function () {
-  socket.emit('image set', $('.image-url').val())
-  $('.image-url').val('')
-})
-socket.on('image set', function(url) {
-  $('.image-display').attr('src', url)
-})
+        /* Big play button before the video is loaded */
+        $('body').on('click', '.vjs-big-play-button', function() {
+            socket.emit('video play', $('.video-element video')[0].currentTime.toString())
+        })
 
-/* Video */
-function updateTime () {
-  if (!$('.video-element')[0].paused) {
-    socket.emit('video time set', $('.video-element video')[0].currentTime.toString())
-  }
-}
-$('.video-set').click(function () {
-  socket.emit('video set', $('.video-url').val())
-  $('.video-url').val('')
-})
-$('.video-url').keyup(function (e) {
-  if(e.keyCode == 13) {
-    $('.video-set').trigger('click')
-  }
-})
-$(".video-volumeslider").on("slidechange", function() {
-  $('.video-element video')[0].volume = $(".video-volumeslider").slider("value") / 100
-  $.cookie('video-volume', $(".video-volumeslider").slider("value") / 100)
-})
+        /* Video play/pause button */
+        $('body').on('click', '.vjs-play-control', function() {
+            if ($(this).hasClass('vjs-paused')) {
+                socket.emit('video play', $('.video-element video')[0].currentTime.toString())
+            } else {
+                socket.emit('video pause', $('.video-element video')[0].currentTime.toString())
+            }
+        })
 
-/* Big play button before the video is loaded */
-$('body').on('click', '.vjs-big-play-button', function () {
-  socket.emit('video play', $('.video-element video')[0].currentTime.toString())
-})
+        socket.on('video play', function(time) {
+            $('.video-element video')[0].currentTime = parseFloat(time)
+            $('.video-element video')[0].play()
+        })
+        socket.on('video pause', function(time) {
+            $('.video-element video')[0].currentTime = parseFloat(time)
+            $('.video-element video')[0].pause()
+        })
+        socket.on('video set', function(data) {
+            if (data.title != null) {
+                if (data.uploader != null) {
+                    $('.video-title').html('<a href="' + data.ytUrl + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>')
+                } else {
+                    $('.video-title').html(data.title)
+                }
+            } else {
+                $('.video-title').empty()
+            }
+            if (data.resolution != null) {
+                $('.video-resolution').html('Resolution: <i>' + data.resolution + '</i>')
+            } else {
+                $('.video-resolution').empty()
+            }
 
-/* Video play/pause button */
-$('body').on('click', '.vjs-play-control', function () {
-  if ($(this).hasClass('vjs-paused')) {
-    socket.emit('video play', $('.video-element video')[0].currentTime.toString())
-  } else {
-    socket.emit('video pause', $('.video-element video')[0].currentTime.toString())
-  }
-})
-
-socket.on('video play', function(time) {
-  $('.video-element video')[0].currentTime = parseFloat(time)
-  $('.video-element video')[0].play()
-})
-socket.on('video pause', function(time) {
-  $('.video-element video')[0].currentTime = parseFloat(time)
-  $('.video-element video')[0].pause()
-})
-socket.on('video set', function(data) {
-  if (data.title != null) {
-    if (data.uploader != null) {
-      $('.video-title').html('<a href="' + data.ytUrl + '" target="_blank">' + data.title + '</a> by <a href="' + data.uploaderUrl + '" target="_blank"><b><i>' + data.uploader + '</i></b></a>')
-    } else {
-      $('.video-title').html(data.title)
-    }
-  } else {
-    $('.video-title').empty()
-  }
-  if (data.resolution != null) {
-    $('.video-resolution').html('Resolution: <i>' + data.resolution + '</i>')
-  } else {
-    $('.video-resolution').empty()
-  }
-
-  $('.video-element video')[0].pause()
-  $('.video-display').attr('src', data.url)
-  $('.video-element video')[0].load()
-  //$('.video-element')[0].play()
-})
-socket.on('video time set', function(time) {
-  $('.video-element video')[0].currentTime = parseFloat(time)
-})
+            $('.video-element video')[0].pause()
+            $('#my-video_html5_api').attr('src', data.url)
+            $('.video-element video')[0].load()
+        })
+        socket.on('video time set', function(time) {
+            $('.video-element video')[0].currentTime = parseFloat(time)
+        })
 
 
-/* Chat */
-$('.chat-username').keyup(function (e) {
-  if(e.keyCode == 13) {
-    $('.chat-setusername').trigger('click')
-    $('.chat-messagetxt').focus()
-  }
-})
-username = 'Faggot'
-scrollPosition = 256
-function addChatMessage (content) {
-  $('.chat-messages').append('<li class="chat-message">' + content + '</li>')
-  if (scrollPosition == 256) {
-    $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
-  }
-}
-function addChatNotice (content) {
-  $('.chat-messages').append('<li class="chat-notice">' + content + '</li>')
-  if (scrollPosition == 256) {
-    $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
-  }
-}
-$('.chat-setusername').click(function () {
-  if ($('.chat-username').val().length > 2 && $('.chat-username').val().length < 24) {
-    username = $('.chat-username').val()
-    $('.login-container').addClass('hidden')
-    $('.chat-container').removeClass('hidden')
-  }
-})
-$('.chat-send').click(function () {
-  if ($('.chat-messagetxt').val().length > 0) {
-    scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop()
-    socket.emit('chat message', { user: username, message: $('.chat-messagetxt').val() })
-    $('.chat-messagetxt').val('')
-  } else {
-    addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>')
-  }
-})
-$('.chat-messagetxt').keyup(function (e) {
-  if(e.keyCode == 13) {
-    $('.chat-send').trigger('click')
-  }
-})
-socket.on('chat message', function(data) {
-  addChatMessage('<b><i>' + data.user + '</i></b>: ' + data.message)
-})
+        /* Chat */
+        $('.chat-username').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('.chat-setusername').trigger('click')
+                $('.chat-messagetxt').focus()
+            }
+        })
+        username = 'Faggot'
+        scrollPosition = 256
+
+        function addChatMessage(content) {
+            $('.chat-messages').append('<li class="chat-message">' + content + '</li>')
+            if (scrollPosition == 256) {
+                $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
+            }
+        }
+
+        function addChatNotice(content) {
+            $('.chat-messages').append('<li class="chat-notice">' + content + '</li>')
+            if (scrollPosition == 256) {
+                $('.chat-messages').scrollTop($('.chat-messages').prop('scrollHeight'))
+            }
+        }
+        $('.chat-setusername').click(function() {
+            if ($('.chat-username').val().length > 2 && $('.chat-username').val().length < 24) {
+                username = $('.chat-username').val()
+                $('.login-container').addClass('hidden')
+                $('.chat-container').removeClass('hidden')
+            }
+        })
+        $('.chat-send').click(function() {
+            if ($('.chat-messagetxt').val().length > 0) {
+                scrollPosition = $('.chat-messages').prop('scrollHeight') - $('.chat-messages').scrollTop()
+                socket.emit('chat message', {
+                    user: username,
+                    message: $('.chat-messagetxt').val()
+                })
+                $('.chat-messagetxt').val('')
+            } else {
+                addChatNotice('<span class="text text-danger">The message can\'t be empty!</span>')
+            }
+        })
+        $('.chat-messagetxt').keyup(function(e) {
+            if (e.keyCode == 13) {
+                $('.chat-send').trigger('click')
+            }
+        })
+        socket.on('chat message', function(data) {
+            addChatMessage('<b><i>' + data.user + '</i></b>: ' + data.message)
+        })
 
 
-/* Load data from server */
-$(document).ready(function () {
-  setInterval(updateTime, 1000)
-  if ($.cookie("video-volume") == undefined) {
-    $.cookie("video-volume", 0.1)
-  }
-  $(".video-volumeslider").slider({
-    range: "min",
-    value: $.cookie("video-volume") * 100
-  })
-  $('.video-element')[0].volume = $.cookie("video-volume")
+        /* Load data from server */
+        $(document).ready(function() {
+            setInterval(updateTime, 1000)
+            if ($.cookie("video-volume") == undefined) {
+                $.cookie("video-volume", 0.1)
+            }
+            $(".video-volumeslider").slider({
+                range: "min",
+                value: $.cookie("video-volume") * 100
+            })
+            $('.video-element')[0].volume = $.cookie("video-volume")
 
-  socket.emit('image get')
-  socket.emit('video get')
-  socket.emit('video time get')
-})
-</script>
+            socket.emit('image get')
+            socket.emit('video get')
+            socket.emit('video time get')
+        })
+    </script>
 </body>
+
 </html>
