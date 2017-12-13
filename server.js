@@ -14,7 +14,7 @@ var vsprintf = require('sprintf-js').vsprintf;
 /* Object to store stuff :^) */
 var storage = {
 	/* The port the webserver listens on */
-	"httpPort" : 8080,
+	"httpPort" : process.env.PORT || 8080,
 
 	/* The default image displayed in the image section */
 	'currentImage' : 'https://www.allmystery.de/i/t292473_post2.jpg',
